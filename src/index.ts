@@ -26,6 +26,6 @@ app.get("/health", async (req: Request, res: Response) => {
 
 app.use("/api/user", myUserRoute);
 
-app.listen(10000, () => {
-  console.log("server started on localhost:10000");
+app.listen(7000, () => {
+  console.log("server started on localhost:7000");
 });
