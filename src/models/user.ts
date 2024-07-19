@@ -1,9 +1,7 @@
-import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  _id: ObjectId,
-  auth0ID: {
+  auth0Id: {
     type: String,
     required: true,
   },
@@ -17,13 +15,13 @@ const userSchema = new mongoose.Schema({
   addressLine1: {
     type: String,
   },
-  country: {
+  city: {
     type: String,
   },
-  city: {
+  country: {
     type: String,
   },
 });
 
-const User = mongoose.model("USER", userSchema);
+const User = mongoose.model("User", userSchema);
 export default User;
