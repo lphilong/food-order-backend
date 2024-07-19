@@ -16,7 +16,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 const app = express();
-
+const PORT = process.env.PORT || 4000;
 app.use(cors());
 
 app.use("/api/order/checkout/webhook", express.raw({ type: "*/*" }));
@@ -32,6 +32,6 @@ app.use("/api/restaurant", RestaurantRoute);
 app.use("/api/search", SearchRoute);
 app.use("/api/order", OrderRoute);
 
-app.listen(3000, () => {
-  console.log("server started on localhost:3000");
+app.listen(PORT, () => {
+  console.log(`server started on ${PORT}`);
 });
