@@ -4,29 +4,61 @@ import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 import Order from "../models/order";
 
-const getRestaurant = async (req: Request, res: Response) => {
+const getAllRestaurants = async (req: Request, res: Response) => {
   try {
-    const restaurant = await Restaurant.findOne({ user: req.userId });
-    if (!restaurant) {
-      return res.status(404).json({ message: "restaurant not found" });
+    const restaurants = await Restaurant.find();
+
+    if (!restaurants || restaurants.length === 0) {
+      return res.status(404).json({ message: "No restaurants found" });
     }
-    res.json(restaurant);
+    res.json(restaurants);
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Error fetching restaurants" });
+  }
+};
+
+//get restaurants by user
+const getRestaurantsByUser = async (req: Request, res: Response) => {
+  try {
+    const restaurants = await Restaurant.find({ user: req.userId }).populate(
+      "user"
+    );
+    if (!restaurants || restaurants.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No restaurants found for this user" });
+    }
+    res.json(restaurants);
   } catch (error) {
     console.log("error", error);
     res.status(500).json({ message: "Error fetching restaurant" });
   }
 };
 
+//delete restaurant
+const deleteRestaurant = async (req: Request, res: Response) => {
+  const restaurantId = req.params.id;
+  try {
+    const deletedRestaurant = await Restaurant.findOneAndDelete({
+      _id: restaurantId,
+    });
+
+    if (!deletedRestaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+    // Delete associated orders
+    const deletedOrders = await Order.deleteMany({ restaurant: restaurantId });
+    res.status(200).json({ message: "Restaurant deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting restaurant" });
+  }
+};
+
+//create restaurant
 const createRestaurant = async (req: Request, res: Response) => {
   try {
-    const existingRestaurant = await Restaurant.findOne({ user: req.userId });
-
-    if (existingRestaurant) {
-      return res
-        .status(409)
-        .json({ message: "User restaurant already exists" });
-    }
-
     const imageUrl = await uploadImage(req.file as Express.Multer.File);
 
     const restaurant = new Restaurant(req.body);
@@ -42,6 +74,7 @@ const createRestaurant = async (req: Request, res: Response) => {
   }
 };
 
+//update restaurant
 const updateRestaurant = async (req: Request, res: Response) => {
   try {
     const restaurant = await Restaurant.findOne({
@@ -49,7 +82,7 @@ const updateRestaurant = async (req: Request, res: Response) => {
     });
 
     if (!restaurant) {
-      return res.status(404).json({ message: "restaurant not found" });
+      return res.status(404).json({ message: "Restaurant not found" });
     }
 
     restaurant.restaurantName = req.body.restaurantName;
@@ -74,6 +107,7 @@ const updateRestaurant = async (req: Request, res: Response) => {
   }
 };
 
+//get orders
 const getRestaurantOrders = async (req: Request, res: Response) => {
   try {
     const restaurant = await Restaurant.findOne({ user: req.userId });
@@ -92,6 +126,7 @@ const getRestaurantOrders = async (req: Request, res: Response) => {
   }
 };
 
+//update order status
 const updateOrderStatus = async (req: Request, res: Response) => {
   try {
     const { orderId } = req.params;
@@ -130,7 +165,9 @@ const uploadImage = async (file: Express.Multer.File) => {
 export default {
   updateOrderStatus,
   getRestaurantOrders,
-  getRestaurant,
+  getAllRestaurants,
   createRestaurant,
   updateRestaurant,
+  deleteRestaurant,
+  getRestaurantsByUser,
 };

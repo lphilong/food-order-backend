@@ -28,8 +28,19 @@ router.patch(
   RestaurantController.updateOrderStatus
 );
 
-router.get("/", jwtCheck, jwtParse, RestaurantController.getRestaurant);
-
+router.get("/", RestaurantController.getAllRestaurants);
+router.get(
+  "/user",
+  jwtCheck,
+  jwtParse,
+  RestaurantController.getRestaurantsByUser
+);
+router.delete(
+  "/:id",
+  jwtCheck,
+  jwtParse,
+  RestaurantController.deleteRestaurant
+);
 router.post(
   "/",
   upload.single("imageFile"),
