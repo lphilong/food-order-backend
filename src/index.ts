@@ -7,6 +7,7 @@ import { v2 as cloudinary } from "cloudinary";
 import RestaurantRoute from "./routes/RestaurantRoute";
 import SearchRoute from "./routes/SearchRoute";
 import OrderRoute from "./routes/OrderRoute";
+
 mongoose
   .connect(process.env.MONGODB_CONNECTION_STRING as string)
   .then(() => console.log("Connected to database!"));
