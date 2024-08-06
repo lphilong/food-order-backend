@@ -51,7 +51,7 @@ router.post(
 );
 
 router.put(
-  "/",
+  "/:id",
   upload.single("imageFile"),
   validateRestaurantRequest,
   jwtCheck,

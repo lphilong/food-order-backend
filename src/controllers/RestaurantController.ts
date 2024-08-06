@@ -93,8 +93,12 @@ const createRestaurant = async (req: Request, res: Response) => {
 const updateRestaurant = async (req: Request, res: Response) => {
   try {
     const { userId, body, file } = req;
+    const { id: restaurantId } = req.params;
 
-    const restaurant = await Restaurant.findOne({ user: userId });
+    const restaurant = await Restaurant.findOne({
+      _id: restaurantId,
+      user: userId,
+    });
 
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
