@@ -19,6 +19,18 @@ const getMyOrders = async (req: Request, res: Response) => {
     res.status(500).json({ message: "something went wrong" });
   }
 };
+const getOrdersByRestaurant = async (req: Request, res: Response) => {
+  try {
+    const orders = await Order.find({ restaurant: req.params.restaurantId })
+      .populate("restaurant")
+      .populate("cartItems.menuItemId");
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Error fetching orders", error });
+  }
+};
 
 type CheckoutSessionRequest = {
   cartItems: {
@@ -175,6 +187,7 @@ const createSession = async (
 
 export default {
   getMyOrders,
+  getOrdersByRestaurant,
   createCheckoutSession,
   stripeWebhookHandler,
 };
