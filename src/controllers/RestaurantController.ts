@@ -135,12 +135,13 @@ const updateRestaurant = async (req: Request, res: Response) => {
 //get orders
 const getRestaurantOrders = async (req: Request, res: Response) => {
   try {
-    const restaurant = await Restaurant.findOne({ user: req.userId });
-    if (!restaurant) {
+    const restaurants = await Restaurant.find({ user: req.userId });
+    if (!restaurants) {
       return res.status(404).json({ message: "restaurant not found" });
     }
+    const restaurantIds = restaurants.map((restaurant) => restaurant._id);
 
-    const orders = await Order.find({ restaurant: restaurant._id })
+    const orders = await Order.find({ restaurant: { $in: restaurantIds } })
       .populate("restaurant")
       .populate("user");
 
