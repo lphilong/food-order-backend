@@ -10,7 +10,8 @@ import OrderRoute from "./routes/OrderRoute";
 
 mongoose
   .connect(process.env.MONGODB_CONNECTION_STRING as string)
-  .then(() => console.log("Connected to database!"));
+  .then(() => console.log("Connected to database!"))
+  .catch((error) => console.error("Database connection error:", error));
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -33,6 +34,10 @@ app.use("/api/my/restaurant", RestaurantRoute);
 app.use("/api/restaurant", SearchRoute);
 app.use("/api/order", OrderRoute);
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`server started on ${PORT}`);
-});
+app
+  .listen(PORT, "0.0.0.0", () => {
+    console.log(`Server started on ${PORT}`);
+  })
+  .on("error", (err) => {
+    console.error("Server startup error:", err);
+  });
