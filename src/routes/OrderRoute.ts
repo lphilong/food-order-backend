@@ -5,6 +5,7 @@ import OrderController from "../controllers/OrderController";
 const router = express.Router();
 
 router.get("/", jwtCheck, jwtParse, OrderController.getMyOrders);
+router.get("/new", jwtCheck, jwtParse, OrderController.getNewOrders);
 router.get(
   "/:restaurantId",
   jwtCheck,

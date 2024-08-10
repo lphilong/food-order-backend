@@ -9,7 +9,20 @@ const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 const getMyOrders = async (req: Request, res: Response) => {
   try {
-    const orders = await Order.find({ user: req.userId, status: "placed" })
+    const orders = await Order.find({ user: req.userId })
+      .populate("restaurant")
+      .populate("user");
+
+    res.json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+const getNewOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await Order.find({ status: "placed" })
       .populate("restaurant")
       .populate("user");
 
@@ -188,6 +201,7 @@ const createSession = async (
 
 export default {
   getMyOrders,
+  getNewOrders,
   getOrdersByRestaurant,
   createCheckoutSession,
   stripeWebhookHandler,
