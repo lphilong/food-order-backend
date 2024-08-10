@@ -9,16 +9,17 @@ const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 const getMyOrders = async (req: Request, res: Response) => {
   try {
-    const orders = await Order.find({ user: req.userId })
+    const orders = await Order.find({ user: req.userId, status: "placed" })
       .populate("restaurant")
       .populate("user");
 
     res.json(orders);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "something went wrong" });
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
+
 const getOrdersByRestaurant = async (req: Request, res: Response) => {
   try {
     const orders = await Order.find({ restaurant: req.params.restaurantId })
