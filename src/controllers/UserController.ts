@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/user";
+import Message from "../models/message";
 
 const getCurrentUser = async (req: Request, res: Response) => {
   try {
