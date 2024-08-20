@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import { createServer } from "http";
 import Message from "./models/message";
+import mongoose from "mongoose";
 
 const setupSocket = (app: any) => {
   const server = createServer(app);
@@ -15,24 +16,23 @@ const setupSocket = (app: any) => {
   io.on("connection", (socket) => {
     console.log("a user connected");
 
-    socket.on("joinRoom", ({ userId, restaurantId }) => {
-      const roomName = `${userId}_${restaurantId}`;
+    socket.on("joinRoom", ({ restaurantId }) => {
+      const roomName = `${restaurantId}`;
       socket.join(roomName);
-      console.log(`User ${userId} joined room ${roomName}`);
+      console.log(`User joined room ${roomName}`);
     });
 
-    socket.on("sendMessage", async (data) => {
-      const { userId, restaurantId, content, senderId } = data;
-      const roomName = `${userId}_${restaurantId}`;
+    socket.on("sendMessage", async ({ restaurantId, content, senderId }) => {
+      const roomName = `${restaurantId}`;
       try {
         const message = new Message({
-          user: userId,
-          restaurant: restaurantId,
+          restaurant: new mongoose.Types.ObjectId(restaurantId), // Use 'new'
           content,
-          senderId: senderId,
+          senderId,
         });
         await message.save();
         io.to(roomName).emit("newMessage", message);
+        console.log(`Message sent in room ${roomName}: ${content}`);
       } catch (error) {
         console.error("Error saving message:", error);
       }
