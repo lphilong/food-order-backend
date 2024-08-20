@@ -35,14 +35,13 @@ app.use(express.json());
 app.get("/health", async (req: Request, res: Response) => {
   res.send({ message: "health OK!" });
 });
+const server = setupSocket(app);
 
 app.use("/api/my/user", UserRoute);
 app.use("/api/my/restaurant", RestaurantRoute);
 app.use("/api/restaurant", SearchRoute);
 app.use("/api/order", OrderRoute);
 app.use("/api/chat", ChatRoute);
-
-const server = setupSocket(app); // Set up Socket.IO with the app
 
 server
   .listen(PORT, "0.0.0.0", () => {
