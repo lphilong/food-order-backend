@@ -3,49 +3,32 @@ import Message from "../models/message";
 import mongoose from "mongoose";
 
 const getMessages = async (req: Request, res: Response) => {
-  const { restaurantId } = req.params;
   try {
+    const { restaurantId } = req.params;
+    const { userId } = req.params;
+
     const messages = await Message.find({
       restaurant: restaurantId,
-    }).populate("restaurant");
-
+      user: userId,
+    })
+      .populate("restaurant")
+      .populate("user");
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ message: "Error getting message" });
   }
 };
 
-const getLastMessage = async (req: Request, res: Response) => {
-  const { restaurantId } = req.params;
-  try {
-    const lastMessages = await Message.aggregate([
-      { $match: { restaurant: new mongoose.Types.ObjectId(restaurantId) } },
-      { $sort: { createdAt: -1 } },
-      { $group: { _id: "$user", lastMessage: { $first: "$$ROOT" } } },
-      {
-        $lookup: {
-          from: "users",
-          localField: "lastMessage.user",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-      { $unwind: "$user" },
-    ]);
-    res.status(200).json(lastMessages);
-  } catch (error) {
-    res.status(500).json({ message: "Error getting message" });
-  }
-};
-
 const sendMessage = async (req: Request, res: Response) => {
-  const { restaurantId, content, senderId } = req.body;
+  const { userId, restaurantId, content, senderId } = req.body;
   try {
     const message = new Message({
       restaurant: new mongoose.Types.ObjectId(restaurantId),
+      user: new mongoose.Types.ObjectId(userId),
       content,
       senderId,
     });
+    console.log(message);
     await message.save();
     res.status(201).json(message);
   } catch (error) {
@@ -54,6 +37,5 @@ const sendMessage = async (req: Request, res: Response) => {
 };
 export default {
   getMessages,
-  getLastMessage,
   sendMessage,
 };

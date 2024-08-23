@@ -4,9 +4,12 @@ import ChatController from "../controllers/ChatController";
 
 const router = express.Router();
 
-router.get("/:restaurantId", jwtCheck, jwtParse, ChatController.getMessages);
-
-router.get("/last/:restaurantId", ChatController.getLastMessage);
+router.get(
+  "/:restaurantId/:userId",
+  jwtCheck,
+  jwtParse,
+  ChatController.getMessages
+);
 
 router.post("/", jwtCheck, jwtParse, ChatController.sendMessage);
 

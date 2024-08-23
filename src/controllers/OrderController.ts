@@ -37,7 +37,8 @@ const getOrdersByRestaurant = async (req: Request, res: Response) => {
   try {
     const orders = await Order.find({ restaurant: req.params.restaurantId })
       .populate("restaurant")
-      .populate("cartItems.menuItemId");
+      .populate("cartItems.menuItemId")
+      .populate("user");
 
     res.status(200).json(orders);
   } catch (error) {
