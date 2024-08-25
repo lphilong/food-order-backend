@@ -13,7 +13,6 @@ const messageSchema = new mongoose.Schema({
     required: true,
   },
   senderId: { type: String, required: true },
-
   createdAt: {
     type: Date,
     default: Date.now,
