@@ -11,6 +11,14 @@ router.get(
   ChatController.getMessages
 );
 
+router.get(
+  "/restaurant/:restaurantId/with-user-info",
+  jwtCheck,
+  jwtParse,
+  ChatController.getLastMessagesWithUserInfo
+);
+router.get("/unread", jwtCheck, jwtParse, ChatController.getUnreadMessage);
+
 router.post("/", jwtCheck, jwtParse, ChatController.sendMessage);
 
 export default router;
