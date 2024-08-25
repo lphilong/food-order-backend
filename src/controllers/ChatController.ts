@@ -5,20 +5,40 @@ import mongoose from "mongoose";
 //get all messages
 const getMessages = async (req: Request, res: Response) => {
   try {
-    const { restaurantId } = req.params;
-    const { userId } = req.params;
+    const { restaurantId, userId } = req.params;
+    const { limit = "20", before = null } = req.query as {
+      limit?: string;
+      before?: string | null;
+    };
 
-    const messages = await Message.find({
+    // Convert 'limit' to number
+    const limitNumber = Number(limit);
+
+    // Convert 'before' to a Date if it's a string
+    const beforeDate = before ? new Date(before) : null;
+
+    // Define the query object with appropriate types
+    const query: any = {
       restaurant: restaurantId,
       user: userId,
-    })
-      .limit(20)
-      .populate("restaurant")
+    };
+
+    // If 'before' is provided, add the 'createdAt' filter
+    if (beforeDate) {
+      query.createdAt = { $lt: beforeDate };
+    }
+
+    // Fetch messages with the query
+    const messages = await Message.find(query)
+      .limit(limitNumber)
       .sort({ createdAt: -1 })
+      .populate("restaurant")
       .populate("user");
+
     res.status(200).json(messages);
   } catch (error) {
-    res.status(500).json({ message: "Error getting message" });
+    console.error("Error getting messages:", error);
+    res.status(500).json({ message: "Error getting messages" });
   }
 };
 
