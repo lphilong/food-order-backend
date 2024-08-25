@@ -22,6 +22,14 @@ const setupSocket = (app: any) => {
       console.log(`User joined room ${roomName}`);
     });
 
+    //show typing
+    socket.on("userTyping", ({ restaurantId, userId }) => {
+      const roomName = `${restaurantId}_${userId}`;
+
+      socket.to(roomName).emit("typing", { userId });
+    });
+
+    //send message
     socket.on(
       "sendMessage",
       async ({ userId, restaurantId, content, senderId }) => {
