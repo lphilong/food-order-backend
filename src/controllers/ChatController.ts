@@ -42,19 +42,6 @@ const getMessages = async (req: Request, res: Response) => {
   }
 };
 
-//get message isn't read
-const getUnreadMessage = async (req: Request, res: Response) => {
-  try {
-    const message = await Message.find({ read: false })
-      .sort({ createdAt: -1 })
-      .populate("restaurant");
-    res.json(message);
-  } catch (error) {
-    console.error("Error fetching message:", error);
-    res.status(500).json({ message: "Something went wrong" });
-  }
-};
-
 //get last message with user info
 const getLastMessagesWithUserInfo = async (req: Request, res: Response) => {
   const restaurantId = req.params.restaurantId;
@@ -111,5 +98,4 @@ export default {
   getMessages,
   sendMessage,
   getLastMessagesWithUserInfo,
-  getUnreadMessage,
 };
