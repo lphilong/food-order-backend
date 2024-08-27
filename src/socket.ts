@@ -16,16 +16,15 @@ const setupSocket = (app: any) => {
   io.on("connection", (socket) => {
     console.log("a user connected");
 
-    socket.on("joinRoom", ({ restaurantId, userId }) => {
+    socket.on("joinRoom", async ({ restaurantId, userId }) => {
       const roomName = `${restaurantId}_${userId}`;
       socket.join(roomName);
-      console.log(`User joined room ${roomName}`);
+      console.log(`User ${userId} joined room ${roomName}`);
     });
 
     //show typing
     socket.on("userTyping", ({ restaurantId, userId }) => {
       const roomName = `${restaurantId}_${userId}`;
-
       socket.to(roomName).emit("typing", { userId });
     });
 

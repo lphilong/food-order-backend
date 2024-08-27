@@ -17,7 +17,6 @@ router.get(
   jwtParse,
   ChatController.getLastMessagesWithUserInfo
 );
-router.get("/unread", jwtCheck, jwtParse, ChatController.getUnreadMessage);
 
 router.post("/", jwtCheck, jwtParse, ChatController.sendMessage);
 
