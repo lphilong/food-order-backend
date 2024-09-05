@@ -18,6 +18,4 @@ router.get(
   ChatController.getLastMessagesWithUserInfo
 );
 
-router.post("/", jwtCheck, jwtParse, ChatController.sendMessage);
-
 export default router;

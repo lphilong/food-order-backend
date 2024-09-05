@@ -11,7 +11,6 @@ const getMessages = async (req: Request, res: Response) => {
       before?: string | null;
     };
 
-    // Convert 'limit' to number
     const limitNumber = Number(limit);
 
     // Convert 'before' to a Date if it's a string
@@ -78,24 +77,7 @@ const getLastMessagesWithUserInfo = async (req: Request, res: Response) => {
   }
 };
 
-//send message
-const sendMessage = async (req: Request, res: Response) => {
-  const { userId, restaurantId, content, senderId } = req.body;
-  try {
-    const message = new Message({
-      restaurant: new mongoose.Types.ObjectId(restaurantId),
-      user: new mongoose.Types.ObjectId(userId),
-      content,
-      senderId,
-    });
-    await message.save();
-    res.status(201).json(message);
-  } catch (error) {
-    res.status(500).json({ message: "Error sending message" });
-  }
-};
 export default {
   getMessages,
-  sendMessage,
   getLastMessagesWithUserInfo,
 };
