@@ -40,10 +40,17 @@ const setupSocket = (app: any) => {
             content,
             senderId,
           });
+          await message.save();
+
           io.to(roomName).emit("newMessage", message);
+          io.to(roomName).emit("messageSent", { messageId: message._id });
           console.log(`Message sent in room ${roomName}: ${content}`);
         } catch (error) {
           console.error("Error saving message:", error);
+          io.to(roomName).emit("sendMessageError", {
+            error: "Failed to send message",
+            content,
+          });
         }
       }
     );
