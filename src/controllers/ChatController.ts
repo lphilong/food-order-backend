@@ -11,23 +11,22 @@ const getMessages = async (req: Request, res: Response) => {
       before?: string | null;
     };
 
-    const limitNumber = Number(limit);
+    const limitNumber = parseInt(limit, 10);
+    if (isNaN(limitNumber)) {
+      return res.status(400).json({ error: "Invalid limit parameter" });
+    }
 
-    // Convert 'before' to a Date if it's a string
     const beforeDate = before ? new Date(before) : null;
 
-    // Define the query object with appropriate types
     const query: any = {
       restaurant: restaurantId,
       user: userId,
     };
 
-    // If 'before' is provided, add the 'createdAt' filter
-    if (beforeDate) {
+    if (beforeDate && !isNaN(beforeDate.getTime())) {
       query.createdAt = { $lt: beforeDate };
     }
 
-    // Fetch messages with the query
     const messages = await Message.find(query)
       .limit(limitNumber)
       .sort({ createdAt: -1 })
@@ -40,7 +39,6 @@ const getMessages = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error getting messages" });
   }
 };
-
 //get last message with user info
 const getLastMessagesWithUserInfo = async (req: Request, res: Response) => {
   const restaurantId = req.params.restaurantId;
